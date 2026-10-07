@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Virtual Calculator</title>
+  <style>
+    body {
+      margin: 0;
+      padding-top: 50px;
+      background-color: #f0f2f5;
+      display: flex;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+    }
+    .calculator-container {
+      width: 320px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      border-radius: 4px;
+      overflow: hidden;
+      background-color: #fff;
+    }
+    /* Component Display */
+    .calc-display {
+      background-color: #d6d8db;
+      height: 90px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding: 0 16px;
+      font-size: 28px;
+      font-family: monospace;
+      font-weight: bold;
+      color: #111;
+      border: 1px solid #aaa;
+      box-sizing: border-box;
+      word-break: break-all;
+    }
+    /* Grid keypad */
+    .calc-keypad {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+    }
+    /* Component Button */
+    .calc-btn {
+      background-color: #4caf50;
+      color: #000;
+      border: 1px solid #388e3c;
+      padding: 16px 0;
+      font-size: 18px;
+      font-weight: 500;
+      cursor: pointer;
+      outline: none;
+      user-select: none;
+    }
+    .calc-btn:active {
+      background-color: #388e3c;
+    }
+    .span-2 {
+      grid-column: span 2;
+    }
+  </style>
+</head>
+<body>
+  <div class="calculator-container">
+    <!-- Component Display: hiển thị kết quả / biểu thức -->
+    <div id="display" class="calc-display">0</div>
+
+    <!-- Component Buttons -->
+    <div class="calc-keypad">
+      <!-- Hàng 1 -->
+      <button class="calc-btn" onclick="handleClick('Clear')">Clear</button>
+      <button class="calc-btn" onclick="handleClick('Delete')">Delete</button>
+      <button class="calc-btn" onclick="handleClick('.')">.</button>
+      <button class="calc-btn" onclick="handleClick('/')">/</button>
+
+      <!-- Hàng 2 -->
+      <button class="calc-btn" onclick="handleClick('7')">7</button>
+      <button class="calc-btn" onclick="handleClick('8')">8</button>
+      <button class="calc-btn" onclick="handleClick('9')">9</button>
+      <button class="calc-btn" onclick="handleClick('*')">*</button>
+
+      <!-- Hàng 3 -->
+      <button class="calc-btn" onclick="handleClick('4')">4</button>
+      <button class="calc-btn" onclick="handleClick('5')">5</button>
+      <button class="calc-btn" onclick="handleClick('6')">6</button>
+      <button class="calc-btn" onclick="handleClick('-')">-</button>
+
+      <!-- Hàng 4 -->
+      <button class="calc-btn" onclick="handleClick('1')">1</button>
+      <button class="calc-btn" onclick="handleClick('2')">2</button>
+      <button class="calc-btn" onclick="handleClick('3')">3</button>
+      <button class="calc-btn" onclick="handleClick('+')">+</button>
+
+      <!-- Hàng 5 -->
+      <button class="calc-btn span-2" onclick="handleClick('0')">0</button>
+      <button class="calc-btn span-2" onclick="handleClick('=')">=</button>
+    </div>
+  </div>
+
+  <script>
+    // State lưu biểu thức hiện tại
+    let expression = '';
+
+    // Hàm cập nhật Component Display theo State
+    function render() {
+      const displayEl = document.getElementById('display');
+      displayEl.innerText = expression || '0';
+    }
+
+    // Logic xử lý khi bấm nút
+    function handleClick(val) {
+      if (val === 'Clear') {
+        expression = '';
+        render();
+        return;
+      }
+
+      if (val === 'Delete') {
+        expression = expression.slice(0, -1);
+        render();
+        return;
+      }
+
+      if (val === '=') {
+        if (!expression) return;
+        try {
+          const sanitized = expression.replace(/×/g, '*').replace(/÷/g, '/');
+          const result = new Function('return ' + sanitized)();
+          expression = String(result);
+        } catch (e) {
+          expression = 'Error';
+        }
+        render();
+        return;
+      }
+
+      if (expression === 'Error') {
+        expression = val;
+      } else {
+        expression += val;
+      }
+      render();
+    }
+  </script>
+</body>
+</html>
